@@ -2,19 +2,35 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from utils.classification import make_prediction
 from collections import OrderedDict
+from api_logger.logging import FastApiLogger
+from pathlib import Path
 
-app = FastAPI()
+def _create_app() -> FastAPI:
+    """ 
+    Create Fast API app and set its logger
+
+    Returns:
+        FastAPI: The Fast API app
+    """
+
+    logging_config_path = Path("api_logger/logging_config.json")
+    api = FastAPI()
+
+    logger = FastApiLogger.make_logger(logging_config_path)
+    api.logger = logger
+    return api
+
+app = _create_app()
 
 @app.get("/")
 async def root():
     return {"message": "Hello World"}
 
+
 class TransactionInput(BaseModel):
     amount: int
     hour: int
     tag: str
-
-
 
 @app.post('/classify')
 async def classify_transaction(transaction: TransactionInput):
@@ -23,5 +39,6 @@ async def classify_transaction(transaction: TransactionInput):
     "hour": transaction.hour,
     "tag": transaction.tag
     }
-    return make_prediction(input_dict)
+    prediction = make_prediction(input_dict)
+    return {"prediction":prediction.tolist()}
     
