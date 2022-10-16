@@ -4,3 +4,4 @@
 *.sav
 *.pyc
 notebooks
+app/api_logger/logs/*
