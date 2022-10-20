@@ -1,6 +1,9 @@
 import pickle
 import numpy as np
-from ..mock_transactions import TransactionInput
+import sys
+sys.path.append("..")
+#from ..mock_transactions import TransactionInput
+from mock_transactions import TransactionInput
 
 classifier_path = "utils/transformers/classifier.sav"
 vectorizer_path = "utils/transformers/word_vectorizer.sav"
@@ -25,5 +28,4 @@ def convert_input_to_array(input_transaction: TransactionInput):
 
 def make_prediction(input_transaction: TransactionInput):
     input_array = convert_input_to_array(input_transaction)
-    prediction = loaded_model.predict(input_array)
-    return prediction
+    return  loaded_model.predict(input_array)

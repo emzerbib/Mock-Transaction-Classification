@@ -30,11 +30,7 @@ async def root():
 
 @app.post('/classify')
 async def classify_transaction(transaction: TransactionInput):
-    input_dict = {
-    "amount": transaction.amount,
-    "hour": transaction.hour,
-    "tag": transaction.tag
-    }
-    prediction = make_prediction(input_dict)
+
+    prediction = make_prediction(transaction)
     return {"prediction":prediction.tolist()}
     

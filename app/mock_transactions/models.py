@@ -1,4 +1,4 @@
-from columns import Columns
+from .columns import Columns
 from pydantic import BaseModel
 from enum import Enum
 
