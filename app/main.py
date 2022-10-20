@@ -4,6 +4,7 @@ from utils.classification import make_prediction
 from collections import OrderedDict
 from api_logger.logging import FastApiLogger
 from pathlib import Path
+from mock_transactions import TransactionInput
 
 def _create_app() -> FastAPI:
     """ 
@@ -26,11 +27,6 @@ app = _create_app()
 async def root():
     return {"message": "Hello World"}
 
-
-class TransactionInput(BaseModel):
-    amount: int
-    hour: int
-    tag: str
 
 @app.post('/classify')
 async def classify_transaction(transaction: TransactionInput):

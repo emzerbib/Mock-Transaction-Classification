@@ -1,26 +1,31 @@
 from .columns import Columns
-from .transactions import GenericTransaction
+from .models import TransactionInput, TransactionType
 import random
 
-def generate_random_transactions(n: int, proportions: tuple = (.94,.05,.01)):
-    """
-    generate n mock transaction with proportions (c, s, t) where:
-    c is the percentage of client transaction
-    s is the percentage of supplier transaction
-    t is the percentage of tax transaction
+PARAMETER_DICT = {
+        Columns.CLIENT: {
+            Columns.AMOUNT_RANGE: (15, 780),
+            Columns.TAG_CHOICES: ('delivery', 'bulk purchase', 'G_dist'),
+            Columns.HOUR_RANGE: (10, 18)
+            },
+        Columns.SUPPLIER: {
+            Columns.AMOUNT_RANGE: (2400, 18000),
+            Columns.TAG_CHOICES: ('ABC_inc', 'XYZ_inc', 'AAA_&_BBB'),
+            Columns.HOUR_RANGE: (6, 21)
+            },
+        Columns.TAX: {
+            Columns.AMOUNT_RANGE: (900, 35000),
+            Columns.TAG_CHOICES: ('CPAM', 'ARC', 'RevenuQc'),
+            Columns.HOUR_RANGE: (0, 1)
+            }
+            }
 
-    """
-    if sum(proportions) != 1:
-        raise InvalidTuple(proportions=proportions)
-    
-    c, s, t = (round(p*n) for p in proportions)
+def generate_transactionInput(transaction_type: TransactionType):
 
-    client_transactions = [GenericTransaction(transaction_type=Columns.CLIENT) for n in range(c)]
-    supplier_transactions = [GenericTransaction(transaction_type=Columns.SUPPLIER) for n in range(s)]
-    tax_transactions = [GenericTransaction(transaction_type=Columns.TAX) for n in range(t)]
+    parameters = {
+        Columns.AMOUNT : random.randint(*PARAMETER_DICT[transaction_type][Columns.AMOUNT_RANGE]),
+        Columns.TAG : random.choice(PARAMETER_DICT[transaction_type][Columns.TAG_CHOICES]),
+        Columns.HOUR : random.randint(*PARAMETER_DICT[transaction_type][Columns.HOUR_RANGE])
+        }
 
-    transactions = client_transactions + supplier_transactions + tax_transactions
-    
-    random.shuffle(transactions)
-
-    return transactions
+    return TransactionInput(**parameters)

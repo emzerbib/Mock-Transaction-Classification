@@ -1,7 +1,6 @@
 import pickle
 import numpy as np
-import sys
-#sys.path.append("rt-transaction-classifier/app/utils") 
+from ..mock_transactions import TransactionInput
 
 classifier_path = "utils/transformers/classifier.sav"
 vectorizer_path = "utils/transformers/word_vectorizer.sav"
@@ -15,15 +14,16 @@ def process_tag(tag: str):
     vector = loaded_vectorizer.transform([tag])
     return vector.toarray()
 
-def convert_input_to_array(input_dict: dict):
+def convert_input_to_array(input_transaction: TransactionInput):
     input_array = np.zeros(N_FEATURES)
 
-    input_array[0] = input_dict['amount']
-    input_array[1] = input_dict['hour']
-    input_array[2:] = process_tag(input_dict['tag'])
+    input_array[0] = input_transaction.amount
+    input_array[1] = input_transaction.hour
+    input_array[2:] = process_tag(input_transaction.tag)
+
     return input_array.reshape(1,-1)
 
-def make_prediction(input_dict):
-    input_array = convert_input_to_array(input_dict=input_dict)
+def make_prediction(input_transaction: TransactionInput):
+    input_array = convert_input_to_array(input_transaction)
     prediction = loaded_model.predict(input_array)
     return prediction
